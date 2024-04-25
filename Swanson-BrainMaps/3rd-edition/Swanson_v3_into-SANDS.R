@@ -365,9 +365,9 @@ setwd("Z:/ULRIKE/openMINDS/Swanson-v3_into-SANDS/generatedFiles")
 
 Swanson_v3_CCSV_list <- list(at_context = list(at_vocab = "https://openminds.ebrains.eu/vocab/"),
                              at_id = paste("https://openminds.ebrains.eu/instances/commonCoordinateSpaceVersion/",Swanson_v3_CCSV$VALUE[Swanson_v3_CCSV$KEY == "abbreviation"],"_v1992", sep = ""),
-                             at_type = "https://openminds.ebrains.eu/core/CommonCoordinateSpaceVersion",
+                             at_type = "https://openminds.ebrains.eu/sands/CommonCoordinateSpaceVersion",
                              abbreviation = ifelse(Swanson_v3_CCSV$VALUE[Swanson_v3_CCSV$KEY == "abbreviation"] == "NA", NA, Swanson_v3_CCSV$VALUE[Swanson_v3_CCSV$KEY == "abbreviation"]),
-                             accessibilty = if(Swanson_v3_CCSV$VALUE[Swanson_v3_CCSV$KEY == "accessibility"] == "NA"){NA}else{list(at_id = Swanson_v3_CCSV$VALUE[Swanson_v3_CCSV$KEY == "accessibility"])},
+                             accessibility = if(Swanson_v3_CCSV$VALUE[Swanson_v3_CCSV$KEY == "accessibility"] == "NA"){NA}else{list(at_id = Swanson_v3_CCSV$VALUE[Swanson_v3_CCSV$KEY == "accessibility"])},
                              anatomicalAxesOrientation = if(Swanson_v3_CCSV$VALUE[Swanson_v3_CCSV$KEY == "anatomicalAxesOrientation"] == "NA"){NA}else{list(at_id = Swanson_v3_CCSV$VALUE[Swanson_v3_CCSV$KEY == "anatomicalAxesOrientation"])},
                              author = ifelse(Swanson_v3_CCSV$VALUE[Swanson_v3_CCSV$KEY == "author"] == "NA", NA, list(list(at_id = Swanson_v3_CCSV$VALUE[Swanson_v3_CCSV$KEY == "author"]))),
                              axesOrigin = Swanson_AxesOr,
@@ -409,7 +409,7 @@ setwd("Z:/ULRIKE/openMINDS/Swanson-v3_into-SANDS/generatedFiles")
 
 Swanson_v3_CCS_list <- list(at_context = list(at_vocab = "https://openminds.ebrains.eu/vocab/"),
                             at_id = paste("https://openminds.ebrains.eu/instances/commonCoordinateSpace/",Swanson_v3_CCS$VALUE[Swanson_v3_CCS$KEY == "abbreviation"], sep = ""),
-                            at_type = "https://openminds.ebrains.eu/core/CommonCoordinateSpace",
+                            at_type = "https://openminds.ebrains.eu/sands/CommonCoordinateSpace",
                             abbreviation = ifelse(Swanson_v3_CCS$VALUE[Swanson_v3_CCS$KEY == "abbreviation"] == "NA", NA, Swanson_v3_CCS$VALUE[Swanson_v3_CCS$KEY == "abbreviation"]),
                             author = ifelse(Swanson_v3_CCS$VALUE[Swanson_v3_CCS$KEY == "author"] == "NA", NA, list(list(at_id = Swanson_v3_CCS$VALUE[Swanson_v3_CCS$KEY == "author"]))),
                             custodian = ifelse(Swanson_v3_CCS$VALUE[Swanson_v3_CCS$KEY == "custodian"] == "NA", NA, list(list(at_id = Swanson_v3_CCS$VALUE[Swanson_v3_CCS$KEY == "custodian"]))),
@@ -435,7 +435,7 @@ setwd("Z:/ULRIKE/openMINDS/Swanson-v3_into-SANDS/generatedFiles")
 
 Swanson_v3_BAV_list <- list(at_context = list(at_vocab = "https://openminds.ebrains.eu/vocab/"),
                              at_id = paste("https://openminds.ebrains.eu/instances/brainAtlasVersion/",Swanson_v3_BAV$VALUE[Swanson_v3_BAV$KEY == "abbreviation"],"_3rd-ed", sep = ""),
-                             at_type = "https://openminds.ebrains.eu/core/BrainAtlasVersion",
+                             at_type = "https://openminds.ebrains.eu/sands/BrainAtlasVersion",
                              abbreviation = ifelse(Swanson_v3_BAV$VALUE[Swanson_v3_BAV$KEY == "abbreviation"] == "NA", NA, Swanson_v3_BAV$VALUE[Swanson_v3_BAV$KEY == "abbreviation"]),
                              accessibility = if(Swanson_v3_BAV$VALUE[Swanson_v3_BAV$KEY == "accessibility"] == "NA"){NA}else{list(at_id = Swanson_v3_BAV$VALUE[Swanson_v3_BAV$KEY == "accessibility"])},
                              author = ifelse(Swanson_v3_BAV$VALUE[Swanson_v3_BAV$KEY == "author"] == "NA", NA, list(list(at_id = Swanson_v3_BAV$VALUE[Swanson_v3_BAV$KEY == "author"]))),
@@ -479,7 +479,7 @@ setwd("Z:/ULRIKE/openMINDS/Swanson-v3_into-SANDS/generatedFiles")
 
 Swanson_v3_BA_list <- list(at_context = list(at_vocab = "https://openminds.ebrains.eu/vocab/"),
                             at_id = paste("https://openminds.ebrains.eu/instances/brainAtlas/",Swanson_v3_BA$VALUE[Swanson_v3_BA$KEY == "abbreviation"], sep = ""),
-                            at_type = "https://openminds.ebrains.eu/core/BrainAtlas",
+                            at_type = "https://openminds.ebrains.eu/sands/BrainAtlas",
                             abbreviation = ifelse(Swanson_v3_BA$VALUE[Swanson_v3_BA$KEY == "abbreviation"] == "NA", NA, Swanson_v3_BA$VALUE[Swanson_v3_BA$KEY == "abbreviation"]),
                             author = ifelse(Swanson_v3_BA$VALUE[Swanson_v3_BA$KEY == "author"] == "NA", NA, list(list(at_id = Swanson_v3_BA$VALUE[Swanson_v3_BA$KEY == "author"]))),
                             custodian = ifelse(Swanson_v3_BA$VALUE[Swanson_v3_BA$KEY == "custodian"] == "NA", NA, list(list(at_id = Swanson_v3_BA$VALUE[Swanson_v3_BA$KEY == "custodian"]))),

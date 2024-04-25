@@ -77,7 +77,7 @@ for(i in 1:length(PAX_v6_PEV$abbreviation)){
 for(i in 1:length(PAX_v6_PEV$abbreviation)){
   if(PAX_v6_PEV$abbreviation[i] == "STSM"){
     PAX_v6_PEV$at_id[i] <- "https://openminds.ebrains.eu/instances/parcellationEntityVersion/PW-RBSC-cor_6th-ed_bedNucleusOfStriaTerminalisSupracapsularDivisionLateralPart"
-    PAX_v6_PEV$additionalRemarks[i] <- "Both the name of the region and its abbreviation have spelling mistakes (name: 'Lateral part' is lacking the space between the words; abbreviation: should read 'STSL' istead of 'STSM'). The assumed correct name 'bed nucleus of stria terminalis, supracapsular division, lateral part' has been added under 'correctedName'. The assumed correct abbreviation 'STSL' has been added under 'abbreviation'. 'STSM' has been added under 'alternateName'."
+    PAX_v6_PEV$additionalRemarks[i] <- "Both the name of the region and its abbreviation have spelling mistakes (name: 'Lateral part' is lacking the space between the words; abbreviation: should read 'STSL' instead of 'STSM'). The assumed correct name 'bed nucleus of stria terminalis, supracapsular division, lateral part' has been added under 'correctedName'. The assumed correct abbreviation 'STSL' has been added under 'abbreviation'. 'STSM' has been added under 'alternateName'."
     PAX_v6_PEV$correctedName[i] <- "bed nucleus of stria terminalis, supracapsular division, lateral part"
     PAX_v6_PEV$abbreviation[i] <- "STSL"
     PAX_v6_PEV$alternateName[i] <- "STSM"
@@ -310,9 +310,9 @@ setwd("Z:/ULRIKE/openMINDS/SANDS/PAX_v6_into-SANDS/generatedFiles")
 ###BREGMA LEFT:
 PAX_v6_CCSV_BrLe_list <- list(at_context = list(at_vocab = "https://openminds.ebrains.eu/vocab/"),
                              at_id = paste("https://openminds.ebrains.eu/instances/commonCoordinateSpaceVersion/",PAX_v6_cor_CCSV_BrLe$VALUE[PAX_v6_cor_CCSV_BrLe$KEY == "abbreviation"],"_v2004-Bregma-left", sep = ""),
-                             at_type = "https://openminds.ebrains.eu/core/CommonCoordinateSpaceVersion",
+                             at_type = "https://openminds.ebrains.eu/sands/CommonCoordinateSpaceVersion",
                              abbreviation = ifelse(PAX_v6_cor_CCSV_BrLe$VALUE[PAX_v6_cor_CCSV_BrLe$KEY == "abbreviation"] == "NA", NA, PAX_v6_cor_CCSV_BrLe$VALUE[PAX_v6_cor_CCSV_BrLe$KEY == "abbreviation"]),
-                             accessibilty = if(PAX_v6_cor_CCSV_BrLe$VALUE[PAX_v6_cor_CCSV_BrLe$KEY == "accessibility"] == "NA"){NA}else{list(at_id = PAX_v6_cor_CCSV_BrLe$VALUE[PAX_v6_cor_CCSV_BrLe$KEY == "accessibility"])},
+                             accessibility = if(PAX_v6_cor_CCSV_BrLe$VALUE[PAX_v6_cor_CCSV_BrLe$KEY == "accessibility"] == "NA"){NA}else{list(at_id = PAX_v6_cor_CCSV_BrLe$VALUE[PAX_v6_cor_CCSV_BrLe$KEY == "accessibility"])},
                              anatomicalAxesOrientation = if(PAX_v6_cor_CCSV_BrLe$VALUE[PAX_v6_cor_CCSV_BrLe$KEY == "anatomicalAxesOrientation"] == "NA"){NA}else{list(at_id = PAX_v6_cor_CCSV_BrLe$VALUE[PAX_v6_cor_CCSV_BrLe$KEY == "anatomicalAxesOrientation"])},
                              author = ifelse(PAX_v6_cor_CCSV_BrLe$VALUE[PAX_v6_cor_CCSV_BrLe$KEY == "author"] == "NA", NA, list(list(at_id = PAX_v6_cor_CCSV_BrLe$VALUE[PAX_v6_cor_CCSV_BrLe$KEY == "author"]))),
                              axesOrigin = NA,
@@ -349,9 +349,9 @@ write(json.CCSV.at, file = paste(PAX_v6_cor_CCSV_BrLe$VALUE[PAX_v6_cor_CCSV_BrLe
 ###BREGMA RIGHT:
 PAX_v6_CCSV_BrRi_list <- list(at_context = list(at_vocab = "https://openminds.ebrains.eu/vocab/"),
                               at_id = paste("https://openminds.ebrains.eu/instances/commonCoordinateSpaceVersion/",PAX_v6_cor_CCSV_BrRi$VALUE[PAX_v6_cor_CCSV_BrRi$KEY == "abbreviation"],"_v2004-Bregma-right", sep = ""),
-                              at_type = "https://openminds.ebrains.eu/core/CommonCoordinateSpaceVersion",
+                              at_type = "https://openminds.ebrains.eu/sands/CommonCoordinateSpaceVersion",
                               abbreviation = ifelse(PAX_v6_cor_CCSV_BrRi$VALUE[PAX_v6_cor_CCSV_BrRi$KEY == "abbreviation"] == "NA", NA, PAX_v6_cor_CCSV_BrRi$VALUE[PAX_v6_cor_CCSV_BrRi$KEY == "abbreviation"]),
-                              accessibilty = if(PAX_v6_cor_CCSV_BrRi$VALUE[PAX_v6_cor_CCSV_BrRi$KEY == "accessibility"] == "NA"){NA}else{list(at_id = PAX_v6_cor_CCSV_BrRi$VALUE[PAX_v6_cor_CCSV_BrRi$KEY == "accessibility"])},
+                              accessibility = if(PAX_v6_cor_CCSV_BrRi$VALUE[PAX_v6_cor_CCSV_BrRi$KEY == "accessibility"] == "NA"){NA}else{list(at_id = PAX_v6_cor_CCSV_BrRi$VALUE[PAX_v6_cor_CCSV_BrRi$KEY == "accessibility"])},
                               anatomicalAxesOrientation = if(PAX_v6_cor_CCSV_BrRi$VALUE[PAX_v6_cor_CCSV_BrRi$KEY == "anatomicalAxesOrientation"] == "NA"){NA}else{list(at_id = PAX_v6_cor_CCSV_BrRi$VALUE[PAX_v6_cor_CCSV_BrRi$KEY == "anatomicalAxesOrientation"])},
                               author = ifelse(PAX_v6_cor_CCSV_BrRi$VALUE[PAX_v6_cor_CCSV_BrRi$KEY == "author"] == "NA", NA, list(list(at_id = PAX_v6_cor_CCSV_BrRi$VALUE[PAX_v6_cor_CCSV_BrRi$KEY == "author"]))),
                               axesOrigin = NA,
@@ -388,9 +388,9 @@ write(json.CCSV.at, file = paste(PAX_v6_cor_CCSV_BrRi$VALUE[PAX_v6_cor_CCSV_BrRi
 ###INTERAURAL LEFT:
 PAX_v6_CCSV_IALe_list <- list(at_context = list(at_vocab = "https://openminds.ebrains.eu/vocab/"),
                               at_id = paste("https://openminds.ebrains.eu/instances/commonCoordinateSpaceVersion/",PAX_v6_cor_CCSV_IALe$VALUE[PAX_v6_cor_CCSV_IALe$KEY == "abbreviation"],"_v2004-Interaural-left", sep = ""),
-                              at_type = "https://openminds.ebrains.eu/core/CommonCoordinateSpaceVersion",
+                              at_type = "https://openminds.ebrains.eu/sands/CommonCoordinateSpaceVersion",
                               abbreviation = ifelse(PAX_v6_cor_CCSV_IALe$VALUE[PAX_v6_cor_CCSV_IALe$KEY == "abbreviation"] == "NA", NA, PAX_v6_cor_CCSV_IALe$VALUE[PAX_v6_cor_CCSV_IALe$KEY == "abbreviation"]),
-                              accessibilty = if(PAX_v6_cor_CCSV_IALe$VALUE[PAX_v6_cor_CCSV_IALe$KEY == "accessibility"] == "NA"){NA}else{list(at_id = PAX_v6_cor_CCSV_IALe$VALUE[PAX_v6_cor_CCSV_IALe$KEY == "accessibility"])},
+                              accessibility = if(PAX_v6_cor_CCSV_IALe$VALUE[PAX_v6_cor_CCSV_IALe$KEY == "accessibility"] == "NA"){NA}else{list(at_id = PAX_v6_cor_CCSV_IALe$VALUE[PAX_v6_cor_CCSV_IALe$KEY == "accessibility"])},
                               anatomicalAxesOrientation = if(PAX_v6_cor_CCSV_IALe$VALUE[PAX_v6_cor_CCSV_IALe$KEY == "anatomicalAxesOrientation"] == "NA"){NA}else{list(at_id = PAX_v6_cor_CCSV_IALe$VALUE[PAX_v6_cor_CCSV_IALe$KEY == "anatomicalAxesOrientation"])},
                               author = ifelse(PAX_v6_cor_CCSV_IALe$VALUE[PAX_v6_cor_CCSV_IALe$KEY == "author"] == "NA", NA, list(list(at_id = PAX_v6_cor_CCSV_IALe$VALUE[PAX_v6_cor_CCSV_IALe$KEY == "author"]))),
                               axesOrigin = NA,
@@ -427,9 +427,9 @@ write(json.CCSV.at, file = paste(PAX_v6_cor_CCSV_IALe$VALUE[PAX_v6_cor_CCSV_IALe
 ###INTERAURAL RIGHT:
 PAX_v6_CCSV_IARi_list <- list(at_context = list(at_vocab = "https://openminds.ebrains.eu/vocab/"),
                               at_id = paste("https://openminds.ebrains.eu/instances/commonCoordinateSpaceVersion/",PAX_v6_cor_CCSV_IARi$VALUE[PAX_v6_cor_CCSV_IARi$KEY == "abbreviation"],"_v2004-Interaural-right", sep = ""),
-                              at_type = "https://openminds.ebrains.eu/core/CommonCoordinateSpaceVersion",
+                              at_type = "https://openminds.ebrains.eu/sands/CommonCoordinateSpaceVersion",
                               abbreviation = ifelse(PAX_v6_cor_CCSV_IARi$VALUE[PAX_v6_cor_CCSV_IARi$KEY == "abbreviation"] == "NA", NA, PAX_v6_cor_CCSV_IARi$VALUE[PAX_v6_cor_CCSV_IARi$KEY == "abbreviation"]),
-                              accessibilty = if(PAX_v6_cor_CCSV_IARi$VALUE[PAX_v6_cor_CCSV_IARi$KEY == "accessibility"] == "NA"){NA}else{list(at_id = PAX_v6_cor_CCSV_IARi$VALUE[PAX_v6_cor_CCSV_IARi$KEY == "accessibility"])},
+                              accessibility = if(PAX_v6_cor_CCSV_IARi$VALUE[PAX_v6_cor_CCSV_IARi$KEY == "accessibility"] == "NA"){NA}else{list(at_id = PAX_v6_cor_CCSV_IARi$VALUE[PAX_v6_cor_CCSV_IARi$KEY == "accessibility"])},
                               anatomicalAxesOrientation = if(PAX_v6_cor_CCSV_IARi$VALUE[PAX_v6_cor_CCSV_IARi$KEY == "anatomicalAxesOrientation"] == "NA"){NA}else{list(at_id = PAX_v6_cor_CCSV_IARi$VALUE[PAX_v6_cor_CCSV_IARi$KEY == "anatomicalAxesOrientation"])},
                               author = ifelse(PAX_v6_cor_CCSV_IARi$VALUE[PAX_v6_cor_CCSV_IARi$KEY == "author"] == "NA", NA, list(list(at_id = PAX_v6_cor_CCSV_IARi$VALUE[PAX_v6_cor_CCSV_IARi$KEY == "author"]))),
                               axesOrigin = NA,
@@ -482,7 +482,7 @@ setwd("Z:/ULRIKE/openMINDS/SANDS/PAX_v6_into-SANDS/generatedFiles")
 
 PAX_v6_cor_CCS_list <- list(at_context = list(at_vocab = "https://openminds.ebrains.eu/vocab/"),
                             at_id = paste("https://openminds.ebrains.eu/instances/commonCoordinateSpace/",PAX_v6_cor_CCS$VALUE[PAX_v6_cor_CCS$KEY == "abbreviation"], sep = ""),
-                            at_type = "https://openminds.ebrains.eu/core/CommonCoordinateSpace",
+                            at_type = "https://openminds.ebrains.eu/sands/CommonCoordinateSpace",
                             abbreviation = ifelse(PAX_v6_cor_CCS$VALUE[PAX_v6_cor_CCS$KEY == "abbreviation"] == "NA", NA, PAX_v6_cor_CCS$VALUE[PAX_v6_cor_CCS$KEY == "abbreviation"]),
                             author = ifelse(PAX_v6_cor_CCS$VALUE[PAX_v6_cor_CCS$KEY == "author"] == "NA", NA, list(list(at_id = PAX_v6_cor_CCS$VALUE[PAX_v6_cor_CCS$KEY == "author"]))),
                             custodian = ifelse(PAX_v6_cor_CCS$VALUE[PAX_v6_cor_CCS$KEY == "custodian"] == "NA", NA, list(list(at_id = PAX_v6_cor_CCS$VALUE[PAX_v6_cor_CCS$KEY == "custodian"]))),
@@ -509,7 +509,7 @@ setwd("Z:/ULRIKE/openMINDS/SANDS/PAX_v6_into-SANDS/generatedFiles")
 ###BREGMA LEFT:
 PAX_v6_cor_BAV_BrLe_list <- list(at_context = list(at_vocab = "https://openminds.ebrains.eu/vocab/"),
                             at_id = paste("https://openminds.ebrains.eu/instances/brainAtlasVersion/",PAX_v6_cor_BAV_BrLe$VALUE[PAX_v6_cor_BAV_BrLe$KEY == "abbreviation"],"_6th-ed-Bregma-left", sep = ""),
-                            at_type = "https://openminds.ebrains.eu/core/BrainAtlasVersion",
+                            at_type = "https://openminds.ebrains.eu/sands/BrainAtlasVersion",
                             abbreviation = ifelse(PAX_v6_cor_BAV_BrLe$VALUE[PAX_v6_cor_BAV_BrLe$KEY == "abbreviation"] == "NA", NA, PAX_v6_cor_BAV_BrLe$VALUE[PAX_v6_cor_BAV_BrLe$KEY == "abbreviation"]),
                             accessibility = if(PAX_v6_cor_BAV_BrLe$VALUE[PAX_v6_cor_BAV_BrLe$KEY == "accessibility"] == "NA"){NA}else{list(at_id = PAX_v6_cor_BAV_BrLe$VALUE[PAX_v6_cor_BAV_BrLe$KEY == "accessibility"])},
                             author = ifelse(PAX_v6_cor_BAV_BrLe$VALUE[PAX_v6_cor_BAV_BrLe$KEY == "author"] == "NA", NA, list(list(at_id = PAX_v6_cor_BAV_BrLe$VALUE[PAX_v6_cor_BAV_BrLe$KEY == "author"]))),
@@ -548,7 +548,7 @@ write(json.BAV.at, file = paste(PAX_v6_cor_BAV_BrLe$VALUE[PAX_v6_cor_BAV_BrLe$KE
 ###BREGMA RIGHT:
 PAX_v6_cor_BAV_BrRi_list <- list(at_context = list(at_vocab = "https://openminds.ebrains.eu/vocab/"),
                                  at_id = paste("https://openminds.ebrains.eu/instances/brainAtlasVersion/",PAX_v6_cor_BAV_BrRi$VALUE[PAX_v6_cor_BAV_BrRi$KEY == "abbreviation"],"_6th-ed-Bregma-right", sep = ""),
-                                 at_type = "https://openminds.ebrains.eu/core/BrainAtlasVersion",
+                                 at_type = "https://openminds.ebrains.eu/sands/BrainAtlasVersion",
                                  abbreviation = ifelse(PAX_v6_cor_BAV_BrRi$VALUE[PAX_v6_cor_BAV_BrRi$KEY == "abbreviation"] == "NA", NA, PAX_v6_cor_BAV_BrRi$VALUE[PAX_v6_cor_BAV_BrRi$KEY == "abbreviation"]),
                                  accessibility = if(PAX_v6_cor_BAV_BrRi$VALUE[PAX_v6_cor_BAV_BrRi$KEY == "accessibility"] == "NA"){NA}else{list(at_id = PAX_v6_cor_BAV_BrRi$VALUE[PAX_v6_cor_BAV_BrRi$KEY == "accessibility"])},
                                  author = ifelse(PAX_v6_cor_BAV_BrRi$VALUE[PAX_v6_cor_BAV_BrRi$KEY == "author"] == "NA", NA, list(list(at_id = PAX_v6_cor_BAV_BrRi$VALUE[PAX_v6_cor_BAV_BrRi$KEY == "author"]))),
@@ -587,7 +587,7 @@ write(json.BAV.at, file = paste(PAX_v6_cor_BAV_BrRi$VALUE[PAX_v6_cor_BAV_BrRi$KE
 ###INTERAURAL LEFT:
 PAX_v6_cor_BAV_IALe_list <- list(at_context = list(at_vocab = "https://openminds.ebrains.eu/vocab/"),
                                  at_id = paste("https://openminds.ebrains.eu/instances/brainAtlasVersion/",PAX_v6_cor_BAV_IALe$VALUE[PAX_v6_cor_BAV_IALe$KEY == "abbreviation"],"_6th-ed-Interaural-left", sep = ""),
-                                 at_type = "https://openminds.ebrains.eu/core/BrainAtlasVersion",
+                                 at_type = "https://openminds.ebrains.eu/sands/BrainAtlasVersion",
                                  abbreviation = ifelse(PAX_v6_cor_BAV_IALe$VALUE[PAX_v6_cor_BAV_IALe$KEY == "abbreviation"] == "NA", NA, PAX_v6_cor_BAV_IALe$VALUE[PAX_v6_cor_BAV_IALe$KEY == "abbreviation"]),
                                  accessibility = if(PAX_v6_cor_BAV_IALe$VALUE[PAX_v6_cor_BAV_IALe$KEY == "accessibility"] == "NA"){NA}else{list(at_id = PAX_v6_cor_BAV_IALe$VALUE[PAX_v6_cor_BAV_IALe$KEY == "accessibility"])},
                                  author = ifelse(PAX_v6_cor_BAV_IALe$VALUE[PAX_v6_cor_BAV_IALe$KEY == "author"] == "NA", NA, list(list(at_id = PAX_v6_cor_BAV_IALe$VALUE[PAX_v6_cor_BAV_IALe$KEY == "author"]))),
@@ -626,7 +626,7 @@ write(json.BAV.at, file = paste(PAX_v6_cor_BAV_IALe$VALUE[PAX_v6_cor_BAV_IALe$KE
 ###INTERAURAL RIGHT:
 PAX_v6_cor_BAV_IARi_list <- list(at_context = list(at_vocab = "https://openminds.ebrains.eu/vocab/"),
                                  at_id = paste("https://openminds.ebrains.eu/instances/brainAtlasVersion/",PAX_v6_cor_BAV_IARi$VALUE[PAX_v6_cor_BAV_IARi$KEY == "abbreviation"],"_6th-ed-Interaural-right", sep = ""),
-                                 at_type = "https://openminds.ebrains.eu/core/BrainAtlasVersion",
+                                 at_type = "https://openminds.ebrains.eu/sands/BrainAtlasVersion",
                                  abbreviation = ifelse(PAX_v6_cor_BAV_IARi$VALUE[PAX_v6_cor_BAV_IARi$KEY == "abbreviation"] == "NA", NA, PAX_v6_cor_BAV_IARi$VALUE[PAX_v6_cor_BAV_IARi$KEY == "abbreviation"]),
                                  accessibility = if(PAX_v6_cor_BAV_IARi$VALUE[PAX_v6_cor_BAV_IARi$KEY == "accessibility"] == "NA"){NA}else{list(at_id = PAX_v6_cor_BAV_IARi$VALUE[PAX_v6_cor_BAV_IARi$KEY == "accessibility"])},
                                  author = ifelse(PAX_v6_cor_BAV_IARi$VALUE[PAX_v6_cor_BAV_IARi$KEY == "author"] == "NA", NA, list(list(at_id = PAX_v6_cor_BAV_IARi$VALUE[PAX_v6_cor_BAV_IARi$KEY == "author"]))),
@@ -681,7 +681,7 @@ setwd("Z:/ULRIKE/openMINDS/SANDS/PAX_v6_into-SANDS/generatedFiles")
 
 PAX_v6_cor_BA_list <- list(at_context = list(at_vocab = "https://openminds.ebrains.eu/vocab/"),
                            at_id = paste("https://openminds.ebrains.eu/instances/brainAtlas/",PAX_v6_cor_BA$VALUE[PAX_v6_cor_BA$KEY == "abbreviation"], sep = ""),
-                           at_type = "https://openminds.ebrains.eu/core/BrainAtlas",
+                           at_type = "https://openminds.ebrains.eu/sands/BrainAtlas",
                            abbreviation = ifelse(PAX_v6_cor_BA$VALUE[PAX_v6_cor_BA$KEY == "abbreviation"] == "NA", NA, PAX_v6_cor_BA$VALUE[PAX_v6_cor_BA$KEY == "abbreviation"]),
                            author = ifelse(PAX_v6_cor_BA$VALUE[PAX_v6_cor_BA$KEY == "author"] == "NA", NA, list(list(at_id = PAX_v6_cor_BA$VALUE[PAX_v6_cor_BA$KEY == "author"]))),
                            custodian = ifelse(PAX_v6_cor_BA$VALUE[PAX_v6_cor_BA$KEY == "custodian"] == "NA", NA, list(list(at_id = PAX_v6_cor_BA$VALUE[PAX_v6_cor_BA$KEY == "custodian"]))),
