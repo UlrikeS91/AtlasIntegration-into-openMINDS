@@ -471,12 +471,15 @@ for(i in 1:length(PAX_v6_PEV$abbreviation)){
 }
 
 ###KF - K??lliker-Fuse nucleus:
+###NOTE 1: "K??lliker" is wrongly translated into the additionalRemarks - corrected the error manually in the JSON-LD instead
+###NOTE 2: "K??lliker-Fuse nucleus" was added manually to the generated JSON-LD under "alternateName" because we decided that this should be included for openMINDS; compare with the corresponding openMINDS instance 
 for(i in 1:length(PAX_v6_PEV$abbreviation)){
   if(PAX_v6_PEV$abbreviation[i] == "KF"){
     PAX_v6_PEV$additionalRemarks[i] <- "Brain region name and abbreviation listed in both chapter 'List of Abbreviations' and chapter 'List of Structures' of the 6th edition of The Rat Brain in Stereotaxic Coordinates (ISBN: 0-12-547612-4). Brain region name and abbreviation were taken from chapter 'List of Structures'. In 'List of Abbreviations', region name has a spelling mistake ('K??lliker' instead of 'K??lliker'). The original name 'K??lliker-Fuse nucleus' has been added under 'alternateName'."
     PAX_v6_PEV$alternateName[i] <- "K??lliker-Fuse nucleus"
   }
 }
+
 
 ###MT - medial terminal nucleus of the accessory optic tract:
 for(i in 1:length(PAX_v6_PEV$abbreviation)){
