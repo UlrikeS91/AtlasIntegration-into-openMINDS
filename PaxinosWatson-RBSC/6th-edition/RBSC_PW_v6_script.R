@@ -9,29 +9,319 @@ library("dplyr")
 library("stringr")
 
 #########################################################################################################################################
+###SKIP IF COMBINED TERMINOLOGY HAS BEEN GENERATED!
+#########################################################################################################################################
+{
+#########################################################################################################################################
 ###Read excel sheets:
-#Terminology with abbreviations:
-PAX_v6_Terms <- read_excel("Z:/ULRIKE/openMINDS/SANDS/PAX_v6_into-SANDS/RBSC_PW_v6_terminology.xlsx")
+#Terminology from "Index of Structures" from Paxinos & Watson RBSC 6th edition:
+PAX_v6_Terms.S <- read_excel("Z:/ULRIKE/openMINDS/SANDS/PAX_v6_into-SANDS/RBSC_PW_v6_terminology-IndexOfStructures.xlsx")
+
+#Terminology from "Index of Abbreviations" from Paxinos & Watson RBSC 6th edition:
+PAX_v6_Terms.A <- read_excel("Z:/ULRIKE/openMINDS/SANDS/PAX_v6_into-SANDS/RBSC_PW_v6_terminology-IndexOfAbbreviations.xlsx")
 
 #########################################################################################################################################
-
 
 #########################################################################################################################################
 ###Terminology file applies to the entire 6th edition of the atlas. Script only generates files for the CORONAL atlas plates!
 #########################################################################################################################################
 
 #########################################################################################################################################
-###PARCELLATION ENTITY VERSIONS: 
-###(from terminology)
+###Split abbreviation and name from terminology files:
+###For structure list:
 
-###lookup/at_id:
-PAX_v6_Terms_labels <- data.frame("nameAbbrev" = PAX_v6_Terms$name, "name" = PAX_v6_Terms$name, "lookup" = NA, "abbreviation" = NA)
+PAX_v6_Terms.S_labels <- data.frame("nameAbbrev" = PAX_v6_Terms.S$name, "name" = PAX_v6_Terms.S$name, "lookup" = NA, "abbreviation" = NA)
 
-for(i in 1:length(PAX_v6_Terms_labels$nameAbbrev)){
-  PAX_v6_Terms_labels$abbreviation[i] <- strsplit(PAX_v6_Terms_labels$nameAbbrev[i], " ")[[1]][length(strsplit(PAX_v6_Terms_labels$nameAbbrev[i], " ")[[1]])]
-  PAX_v6_Terms_labels$name[i] <- substr(PAX_v6_Terms_labels$name[i], 1, (nchar(PAX_v6_Terms_labels$name[i])-nchar(PAX_v6_Terms_labels$abbreviation[i])-1))
-  PAX_v6_Terms_labels$lookup[i] <- PAX_v6_Terms_labels$name[i]
+for(i in 1:length(PAX_v6_Terms.S_labels$nameAbbrev)){
+  PAX_v6_Terms.S_labels$abbreviation[i] <- strsplit(PAX_v6_Terms.S_labels$nameAbbrev[i], " ")[[1]][length(strsplit(PAX_v6_Terms.S_labels$nameAbbrev[i], " ")[[1]])]
+  PAX_v6_Terms.S_labels$name[i] <- substr(PAX_v6_Terms.S_labels$name[i], 1, (nchar(PAX_v6_Terms.S_labels$name[i])-nchar(PAX_v6_Terms.S_labels$abbreviation[i])-1))
+  PAX_v6_Terms.S_labels$lookup[i] <- PAX_v6_Terms.S_labels$name[i]
+  PAX_v6_Terms.S_labels$name[i] <- str_trim(PAX_v6_Terms.S_labels$name[i])
 }
+
+count_Terms.S <- data.frame(table(PAX_v6_Terms.S_labels$name))
+###region names "stratum lucidum of the hippocampus" and "subiculum" have been listed twice in "List of Structures"
+count_Terms.S <- data.frame(table(PAX_v6_Terms.S_labels$abbreviation))
+###abbreviation count confirms "stratum lucidum of the hippocampus" and "subiculum" as duplicates
+###abbreviation "STS" exists twice in "List of Structures" - one as "bed nucleus of the stria terminalis, supracapsular division" and 
+#####another as "bed nucleus of stria terminalis, supracapsular division" (with and without "the")
+
+###For abbreviation list:
+PAX_v6_Terms.A_labels <- data.frame("nameAbbrev" = PAX_v6_Terms.A$name, "name" = PAX_v6_Terms.A$name, "lookup" = NA, "abbreviation" = NA)
+
+for(i in 1:length(PAX_v6_Terms.A_labels$nameAbbrev)){
+  PAX_v6_Terms.A_labels$abbreviation[i] <- strsplit(PAX_v6_Terms.A_labels$nameAbbrev[i], " ")[[1]][1]
+  PAX_v6_Terms.A_labels$name[i] <- substr(PAX_v6_Terms.A_labels$name[i], nchar(PAX_v6_Terms.A_labels$abbreviation[i])+2, nchar(PAX_v6_Terms.A_labels$name[i]))
+  PAX_v6_Terms.A_labels$lookup[i] <- PAX_v6_Terms.A_labels$name[i]
+  PAX_v6_Terms.A_labels$name[i] <- str_trim(PAX_v6_Terms.A_labels$name[i])
+}
+
+count_Terms.A <- data.frame(table(PAX_v6_Terms.A_labels$name))
+###no duplicated region names in "List of Abbreviations"
+count_Terms.A <- data.frame(table(PAX_v6_Terms.A_labels$abbreviation))
+###abbreviation count confirms this again
+
+###Comparison between "List of Structures" and "List of Abbreviations":
+###Names:
+PAX_v6_Terms.A <- data.frame("name" = PAX_v6_Terms.A_labels$name)
+PAX_v6_Terms.S <- data.frame("name" = PAX_v6_Terms.S_labels$name)
+Terms.comp.name <- rbind(PAX_v6_Terms.A, PAX_v6_Terms.S)
+count.name <- data.frame(table(Terms.comp.name$name))
+
+names(count.name)[1] <- "regionName"
+names(count.name)[2] <- "occurance"
+
+count.name$source <- NA
+for(i in 1:length(PAX_v6_Terms.A$name)){
+  for(j in 1:length(count.name$regionName)){
+    if(PAX_v6_Terms.A$name[i] == count.name$regionName[j]){
+      count.name$source[j] <- "ListOfAbbreviations"
+    }
+  }
+}
+for(i in 1:length(PAX_v6_Terms.S$name)){
+  for(j in 1:length(count.name$regionName)){
+    if(PAX_v6_Terms.S$name[i] == count.name$regionName[j]){
+      count.name$source[j] <- "ListOfStructures"
+    }
+  }
+}
+for(i in 1:length(count.name$regionName)){
+  if(count.name$occurance[i] == 2){
+    count.name$source[i] <- "both" 
+  }
+}
+for(i in 1:length(count.name$regionName)){
+  if(count.name$regionName[i] == "subiculum"){
+    count.name$source[i] <- "twice in ListOfStructures" 
+  }
+}
+for(i in 1:length(count.name$regionName)){
+  if(count.name$occurance[i] == 3){
+    count.name$source[i] <- "twice in ListOfStructures & once in ListOfAbbreviations" 
+  }
+}
+
+###Abbreviations:
+PAX_v6_Terms.A <- data.frame("abbrev" = PAX_v6_Terms.A_labels$abbreviation)
+PAX_v6_Terms.S <- data.frame("abbrev" = PAX_v6_Terms.S_labels$abbreviation)
+Terms.comp.abbrev <- rbind(PAX_v6_Terms.A, PAX_v6_Terms.S)
+count.abbrev <- data.frame(table(Terms.comp.abbrev$abbrev))
+
+names(count.abbrev)[1] <- "regionAbbrev"
+names(count.abbrev)[2] <- "occurance"
+
+count.abbrev$source <- NA
+for(i in 1:length(PAX_v6_Terms.A$abbrev)){
+  for(j in 1:length(count.abbrev$regionAbbrev)){
+    if(PAX_v6_Terms.A$abbrev[i] == count.abbrev$regionAbbrev[j]){
+      count.abbrev$source[j] <- "ListOfAbbreviations"
+    }
+  }
+}
+for(i in 1:length(PAX_v6_Terms.S$abbrev)){
+  for(j in 1:length(count.abbrev$regionAbbrev)){
+    if(PAX_v6_Terms.S$abbrev[i] == count.abbrev$regionAbbrev[j]){
+      count.abbrev$source[j] <- "ListOfStructures"
+    }
+  }
+}
+for(i in 1:length(count.abbrev$regionAbbrev)){
+  if(count.abbrev$occurance[i] == 2){
+    count.abbrev$source[i] <- "both" 
+  }
+}
+for(i in 1:length(count.abbrev$regionAbbrev)){
+  if(count.abbrev$regionAbbrev[i] == "S"){
+    count.abbrev$source[i] <- "twice in ListOfStructures" 
+  }
+}
+for(i in 1:length(count.abbrev$regionAbbrev)){
+  if(count.abbrev$occurance[i] == 3){
+    count.abbrev$source[i] <- "twice in ListOfStructures & once in ListOfAbbreviations" 
+  }
+}
+
+###Add information to summary files:
+###List of Structures:
+PAX_v6_Terms.S_labels$source <- NA
+
+for(i in 1:length(PAX_v6_Terms.S_labels$name)){
+  for(j in 1:length(count.name$regionName)){
+    if(PAX_v6_Terms.S_labels$name[i] == count.name$regionName[j] && count.name$source[j] == "ListOfStructures"){
+      PAX_v6_Terms.S_labels$source[i] <- "NameOnlyHere"
+    }else if(PAX_v6_Terms.S_labels$name[i] == count.name$regionName[j] && count.name$source[j] == "both"){
+      PAX_v6_Terms.S_labels$source[i] <- "NameInBoth"
+    }else if(PAX_v6_Terms.S_labels$name[i] == count.name$regionName[j] && count.name$source[j] == "twice in ListOfStructures & once in ListOfAbbreviations"){
+      PAX_v6_Terms.S_labels$source[i] <- "NameInBothTwiceHere"
+    }else if(PAX_v6_Terms.S_labels$name[i] == count.name$regionName[j] && count.name$source[j] == "twice in ListOfStructures"){
+      PAX_v6_Terms.S_labels$source[i] <- "NameOnlyHereTwice"
+    }
+  }
+}
+
+for(i in 1:length(PAX_v6_Terms.S_labels$abbreviation)){
+  for(j in 1:length(count.abbrev$regionAbbrev)){
+    if(PAX_v6_Terms.S_labels$abbreviation[i] == count.abbrev$regionAbbrev[j] && count.abbrev$source[j] == "ListOfStructures"
+       && PAX_v6_Terms.S_labels$source[i] == "NameOnlyHere"){
+      PAX_v6_Terms.S_labels$source[i] <- "OnlyHere"
+    }else if(PAX_v6_Terms.S_labels$abbreviation[i] == count.abbrev$regionAbbrev[j] && count.abbrev$source[j] == "ListOfStructures"
+             && PAX_v6_Terms.S_labels$source[i] == "NameInBoth"){
+      PAX_v6_Terms.S_labels$source[i] <- "NameInBoth-CheckAbbrev"
+    }else if(PAX_v6_Terms.S_labels$abbreviation[i] == count.abbrev$regionAbbrev[j] && count.abbrev$source[j] == "ListOfStructures"
+             && PAX_v6_Terms.S_labels$source[i] == "NameInBothTwiceHere"){
+      PAX_v6_Terms.S_labels$source[i] <- "mismatch"
+    }else if(PAX_v6_Terms.S_labels$abbreviation[i] == count.abbrev$regionAbbrev[j] && count.abbrev$source[j] == "ListOfStructures"
+             && PAX_v6_Terms.S_labels$source[i] == "NameOnlyHereTwice"){
+      PAX_v6_Terms.S_labels$source[i] <- "mismatch"
+    }
+  }
+}
+
+for(i in 1:length(PAX_v6_Terms.S_labels$abbreviation)){
+  for(j in 1:length(count.abbrev$regionAbbrev)){
+    if(PAX_v6_Terms.S_labels$abbreviation[i] == count.abbrev$regionAbbrev[j] && count.abbrev$source[j] == "both"
+       && PAX_v6_Terms.S_labels$source[i] == "NameOnlyHere"){
+      PAX_v6_Terms.S_labels$source[i] <- "NameOnlyHere-CheckAbbrev"
+    }else if(PAX_v6_Terms.S_labels$abbreviation[i] == count.abbrev$regionAbbrev[j] && count.abbrev$source[j] == "both"
+             && PAX_v6_Terms.S_labels$source[i] == "NameInBoth"){
+      PAX_v6_Terms.S_labels$source[i] <- "BothInBoth"
+    }else if(PAX_v6_Terms.S_labels$abbreviation[i] == count.abbrev$regionAbbrev[j] && count.abbrev$source[j] == "both"
+             && PAX_v6_Terms.S_labels$source[i] == "NameInBothTwiceHere"){
+      PAX_v6_Terms.S_labels$source[i] <- "mismatch"
+    }else if(PAX_v6_Terms.S_labels$abbreviation[i] == count.abbrev$regionAbbrev[j] && count.abbrev$source[j] == "both"
+             && PAX_v6_Terms.S_labels$source[i] == "NameOnlyHereTwice"){
+      PAX_v6_Terms.S_labels$source[i] <- "mismatch"
+    }
+  }
+}
+
+for(i in 1:length(PAX_v6_Terms.S_labels$abbreviation)){
+  for(j in 1:length(count.abbrev$regionAbbrev)){
+    if(PAX_v6_Terms.S_labels$abbreviation[i] == count.abbrev$regionAbbrev[j] && count.abbrev$source[j] == "twice in ListOfStructures"
+       && PAX_v6_Terms.S_labels$source[i] == "NameOnlyHere"){
+      PAX_v6_Terms.S_labels$source[i] <- "NameOnceAbbrevTwice-CheckAbbrev"
+    }else if(PAX_v6_Terms.S_labels$abbreviation[i] == count.abbrev$regionAbbrev[j] && count.abbrev$source[j] == "twice in ListOfStructures"
+             && PAX_v6_Terms.S_labels$source[i] == "NameInBoth"){
+      PAX_v6_Terms.S_labels$source[i] <- "NameInBothAbbrevTwiceHere-CheckAbbrev"
+    }else if(PAX_v6_Terms.S_labels$abbreviation[i] == count.abbrev$regionAbbrev[j] && count.abbrev$source[j] == "twice in ListOfStructures"
+             && PAX_v6_Terms.S_labels$source[i] == "NameInBothTwiceHere"){
+      PAX_v6_Terms.S_labels$source[i] <- "NameInBothTwiceHere-AbbrevTwice-CheckAbbrev"
+    }else if(PAX_v6_Terms.S_labels$abbreviation[i] == count.abbrev$regionAbbrev[j] && count.abbrev$source[j] == "twice in ListOfStructures"
+             && PAX_v6_Terms.S_labels$source[i] == "NameOnlyHereTwice"){
+      PAX_v6_Terms.S_labels$source[i] <- "NameOnlyHereTwice-AbbrevTwice-CheckAbbrev"
+    }
+  }
+}
+
+for(i in 1:length(PAX_v6_Terms.S_labels$abbreviation)){
+  for(j in 1:length(count.abbrev$regionAbbrev)){
+    if(PAX_v6_Terms.S_labels$abbreviation[i] == count.abbrev$regionAbbrev[j] && count.abbrev$source[j] == "twice in ListOfStructures & once in ListOfAbbreviations"
+       && PAX_v6_Terms.S_labels$source[i] == "NameOnlyHere"){
+      PAX_v6_Terms.S_labels$source[i] <- "NameOnceAbbrevTwice-CheckAbbrev"
+    }else if(PAX_v6_Terms.S_labels$abbreviation[i] == count.abbrev$regionAbbrev[j] && count.abbrev$source[j] == "twice in ListOfStructures & once in ListOfAbbreviations"
+             && PAX_v6_Terms.S_labels$source[i] == "NameInBoth"){
+      PAX_v6_Terms.S_labels$source[i] <- "NameInBothAbbrevTwiceHere-CheckAbbrev"
+    }else if(PAX_v6_Terms.S_labels$abbreviation[i] == count.abbrev$regionAbbrev[j] && count.abbrev$source[j] == "twice in ListOfStructures & once in ListOfAbbreviations"
+             && PAX_v6_Terms.S_labels$source[i] == "NameInBothTwiceHere"){
+      PAX_v6_Terms.S_labels$source[i] <- "NameInBothTwiceHere-AbbrevTwice-CheckAbbrev"
+    }else if(PAX_v6_Terms.S_labels$abbreviation[i] == count.abbrev$regionAbbrev[j] && count.abbrev$source[j] == "twice in ListOfStructures & once in ListOfAbbreviations"
+             && PAX_v6_Terms.S_labels$source[i] == "NameOnlyHereTwice"){
+      PAX_v6_Terms.S_labels$source[i] <- "NameOnlyHereTwice-AbbrevTwice-CheckAbbrev"
+    }
+  }
+}
+
+names(PAX_v6_Terms.S_labels)[5] <- "sourceNote"
+PAX_v6_Terms.S_labels$source <-- NA
+PAX_v6_Terms.S_labels$source <- "ListOfStructures"
+
+###List of Abbreviations:
+PAX_v6_Terms.A_labels$source <- NA
+
+for(i in 1:length(PAX_v6_Terms.A_labels$name)){
+  for(j in 1:length(count.name$regionName)){
+    if(PAX_v6_Terms.A_labels$name[i] == count.name$regionName[j] && count.name$source[j] == "ListOfAbbreviations"){
+      PAX_v6_Terms.A_labels$source[i] <- "NameOnlyHere"
+    }else if(PAX_v6_Terms.A_labels$name[i] == count.name$regionName[j] && count.name$source[j] == "both"){
+      PAX_v6_Terms.A_labels$source[i] <- "NameInBoth"
+    }else if(PAX_v6_Terms.A_labels$name[i] == count.name$regionName[j] && count.name$source[j] == "twice in ListOfStructures & once in ListOfAbbreviations"){
+      PAX_v6_Terms.A_labels$source[i] <- "NameInBoth-CheckName"
+    }
+  }
+}
+
+for(i in 1:length(PAX_v6_Terms.A_labels$abbreviation)){
+  for(j in 1:length(count.abbrev$regionAbbrev)){
+    if(PAX_v6_Terms.A_labels$abbreviation[i] == count.abbrev$regionAbbrev[j] && count.abbrev$source[j] == "ListOfAbbreviations"
+       && PAX_v6_Terms.A_labels$source[i] == "NameOnlyHere"){
+      PAX_v6_Terms.A_labels$source[i] <- "OnlyHere"
+    }else if(PAX_v6_Terms.A_labels$abbreviation[i] == count.abbrev$regionAbbrev[j] && count.abbrev$source[j] == "ListOfAbbreviations"
+             && PAX_v6_Terms.A_labels$source[i] == "NameInBoth"){
+      PAX_v6_Terms.A_labels$source[i] <- "NameInBoth-CheckAbbrev"
+    }else if(PAX_v6_Terms.A_labels$abbreviation[i] == count.abbrev$regionAbbrev[j] && count.abbrev$source[j] == "ListOfAbbreviations"
+             && PAX_v6_Terms.A_labels$source[i] == "NameInBoth-CheckName"){
+      PAX_v6_Terms.A_labels$source[i] <- "NameInBothAbbrevOnce-CheckName"
+    }
+  }
+}
+
+for(i in 1:length(PAX_v6_Terms.A_labels$abbreviation)){
+  for(j in 1:length(count.abbrev$regionAbbrev)){
+    if(PAX_v6_Terms.A_labels$abbreviation[i] == count.abbrev$regionAbbrev[j] && count.abbrev$source[j] == "both"
+       && PAX_v6_Terms.A_labels$source[i] == "NameOnlyHere"){
+      PAX_v6_Terms.A_labels$source[i] <- "NameOnlyHere-CheckAbbrev"
+    }else if(PAX_v6_Terms.A_labels$abbreviation[i] == count.abbrev$regionAbbrev[j] && count.abbrev$source[j] == "both"
+             && PAX_v6_Terms.A_labels$source[i] == "NameInBoth"){
+      PAX_v6_Terms.A_labels$source[i] <- "BothInBoth"
+    }else if(PAX_v6_Terms.A_labels$abbreviation[i] == count.abbrev$regionAbbrev[j] && count.abbrev$source[j] == "both"
+             && PAX_v6_Terms.A_labels$source[i] == "NameInBoth-CheckName"){
+      PAX_v6_Terms.A_labels$source[i] <- "NameInBothAbbrevOnce-CheckName"
+    }
+  }
+}
+
+for(i in 1:length(PAX_v6_Terms.A_labels$abbreviation)){
+  for(j in 1:length(count.abbrev$regionAbbrev)){
+    if(PAX_v6_Terms.A_labels$abbreviation[i] == count.abbrev$regionAbbrev[j] && count.abbrev$source[j] == "twice in ListOfStructures & once in ListOfAbbreviations"
+       && PAX_v6_Terms.A_labels$source[i] == "NameOnlyHere"){
+      PAX_v6_Terms.A_labels$source[i] <- "NameOnlyHereAbbrevInBoth-CheckAbbrev"
+    }else if(PAX_v6_Terms.A_labels$abbreviation[i] == count.abbrev$regionAbbrev[j] && count.abbrev$source[j] == "twice in ListOfStructures & once in ListOfAbbreviations"
+             && PAX_v6_Terms.A_labels$source[i] == "NameInBoth"){
+      PAX_v6_Terms.A_labels$source[i] <- "NameInBothAbbrevInBoth-CheckAbbrev"
+    }else if(PAX_v6_Terms.A_labels$abbreviation[i] == count.abbrev$regionAbbrev[j] && count.abbrev$source[j] == "twice in ListOfStructures & once in ListOfAbbreviations"
+             && PAX_v6_Terms.A_labels$source[i] == "NameInBoth-CheckName"){
+      PAX_v6_Terms.A_labels$source[i] <- "NameInBothAbbrevInBoth-CheckName-CheckAbbrev"
+    }
+  }
+}
+
+names(PAX_v6_Terms.A_labels)[5] <- "sourceNote"
+PAX_v6_Terms.A_labels$source <-- NA
+PAX_v6_Terms.A_labels$source <- "ListOfAbbreviations"
+
+PAX_v6_Terms_labels <- rbind(PAX_v6_Terms.A_labels, PAX_v6_Terms.S_labels)
+
+###Export as excel for visual inspection and annotation of which terms to use in next steps:
+write_xlsx(PAX_v6_Terms_labels,"Z:/ULRIKE/openMINDS/SANDS/PAX_v6_into-SANDS/generatedFiles/00_forInspectionOnly/RBSC_PW_v6_terminology_combined.xlsx")
+
+#########################################################################################################################################
+}
+#########################################################################################################################################
+###START HERE IF COMBINED TERMINOLOGY HAS BEEN GENERATED!
+#########################################################################################################################################
+
+#########################################################################################################################################
+###Read excel sheets:
+#Combined terminology from "Index of Structures" and "Index of Abbreviations" from Paxinos & Watson RBSC 6th edition
+#Annotated with "use" or "no" indicating which to use in next step, and comments that need to be corrected manually: 
+PAX_v6_Terms <- read_excel("Z:/ULRIKE/openMINDS/SANDS/PAX_v6_into-SANDS/RBSC_PW_v6_terminology_combined_use.xlsx")
+
+PAX_v6_Terms <- PAX_v6_Terms[PAX_v6_Terms$use == "use",]
+
+###Combined list of brain regions:
+PAX_v6_Terms_labels <- data.frame("name" = PAX_v6_Terms$name, "lookup" = PAX_v6_Terms$lookup, "abbreviation" = PAX_v6_Terms$abbreviation,
+                                  "source" = PAX_v6_Terms$source, "sourceNote" = PAX_v6_Terms$sourceNote, "comment" = PAX_v6_Terms$comment)
 
 ##Removes punctuation (!"#$%&???()*+,-./:;<=>?@[]^_`{|}~):
 PAX_v6_Terms_labels$lookup <- gsub("([[:punct:]])", " ", PAX_v6_Terms_labels$lookup)
@@ -45,31 +335,81 @@ PAX_v6_Terms_labels$lookup <- gsub(" ([[:alpha:]])", "\\U\\1", PAX_v6_Terms_labe
 ##Removes any additional white spaces:
 PAX_v6_Terms_labels$lookup <- gsub(" ", "", PAX_v6_Terms_labels$lookup, perl = TRUE)
 
+#########################################################################################################################################
 
-###ParcellationEntityVersion table:
+#########################################################################################################################################
+###PARCELLATION ENTITY VERSIONS: 
+###(from terminology)
 PAX_v6_PEV <- data.frame("at_id" = paste("https://openminds.ebrains.eu/instances/parcellationEntityVersion/PW-RBSC-cor_6th-ed_", PAX_v6_Terms_labels$lookup, sep = ""),
-                             "at_type" = rep("https://openminds.ebrains.eu/sands/ParcellationEntityVersion", length(PAX_v6_Terms$name)),
+                             "at_type" = rep("https://openminds.ebrains.eu/sands/ParcellationEntityVersion", length(PAX_v6_Terms_labels$name)),
                              "abbreviation" = PAX_v6_Terms_labels$abbreviation,
-                             "additionalRemarks" = rep(NA, length(PAX_v6_Terms$name)),
-                             "alternateName" = rep(NA, length(PAX_v6_Terms$name)),
-                             "correctedName" = rep(NA, length(PAX_v6_Terms$name)),
-                             "hasAnnotation" = rep(NA, length(PAX_v6_Terms$name)),
-                             "hasParent" = rep(NA, length(PAX_v6_Terms$name)),
+                             "additionalRemarks" = rep(NA, length(PAX_v6_Terms_labels$name)),
+                             "alternateName" = rep(NA, length(PAX_v6_Terms_labels$name)),
+                             "correctedName" = rep(NA, length(PAX_v6_Terms_labels$name)),
+                             "hasAnnotation" = rep(NA, length(PAX_v6_Terms_labels$name)),
+                             "hasParent" = rep(NA, length(PAX_v6_Terms_labels$name)),
                              "lookupLabel" = paste("PW-RBSC-cor_6th-ed_", PAX_v6_Terms_labels$lookup, sep = ""),
                              "name" = PAX_v6_Terms_labels$name,
-                             "ontologyIdentifier" = rep(NA, length(PAX_v6_Terms$name)),
-                             "relationAssessment" = rep(NA, length(PAX_v6_Terms$name)), 
-                             "versionIdentifier" = rep("6th ed.", length(PAX_v6_Terms$name)),
-                             "versionInnovation" = rep(NA, length(PAX_v6_Terms$name)))
+                             "ontologyIdentifier" = rep(NA, length(PAX_v6_Terms_labels$name)),
+                             "relationAssessment" = rep(NA, length(PAX_v6_Terms_labels$name)), 
+                             "versionIdentifier" = rep("6th ed.", length(PAX_v6_Terms_labels$name)),
+                             "versionInnovation" = rep(NA, length(PAX_v6_Terms_labels$name)))
+
+###Add origin of brain region and if brain region was listed in both lists:
+for(i in 1:length(PAX_v6_PEV$at_id)){
+  for(j in 1:length(PAX_v6_Terms_labels$name)){
+    if(PAX_v6_PEV$name[i] == PAX_v6_Terms_labels$name[j] && PAX_v6_Terms_labels$sourceNote[j] == "OnlyHere" 
+       && PAX_v6_Terms_labels$source[j] == "ListOfStructures"){
+      PAX_v6_PEV$additionalRemarks[i] <- "Brain region name and abbreviation only listed in chapter 'List of Structures' of the 6th edition of The Rat Brain in Stereotaxic Coordinates (ISBN: 0-12-547612-4). Brain region name and abbreviation were taken from this chapter."
+    }else if(PAX_v6_PEV$name[i] == PAX_v6_Terms_labels$name[j] && PAX_v6_Terms_labels$sourceNote[j] == "OnlyHere" 
+             && PAX_v6_Terms_labels$source[j] == "ListOfAbbreviations"){
+      PAX_v6_PEV$additionalRemarks[i] <- "Brain region name and abbreviation only listed in chapter 'List of Abbreviations' of the 6th edition of The Rat Brain in Stereotaxic Coordinates (ISBN: 0-12-547612-4). Brain region name and abbreviation were taken from this chapter."
+    }else if(PAX_v6_PEV$name[i] == PAX_v6_Terms_labels$name[j] && PAX_v6_Terms_labels$sourceNote[j] == "BothInBoth" 
+             && PAX_v6_Terms_labels$source[j] == "ListOfStructures"){
+      PAX_v6_PEV$additionalRemarks[i] <- "Brain region name and abbreviation listed in both chapter 'List of Abbreviations' and chapter 'List of Structures' of the 6th edition of The Rat Brain in Stereotaxic Coordinates (ISBN: 0-12-547612-4). Brain region name and abbreviation were taken from chapter 'List of Structures'."
+    }else if(PAX_v6_PEV$name[i] == PAX_v6_Terms_labels$name[j] && PAX_v6_Terms_labels$sourceNote[j] == "BothInBoth" 
+             && PAX_v6_Terms_labels$source[j] == "ListOfAbbreviations"){
+      PAX_v6_PEV$additionalRemarks[i] <- "Brain region name and abbreviation listed in both chapter 'List of Abbreviations' and chapter 'List of Structures' of the 6th edition of The Rat Brain in Stereotaxic Coordinates (ISBN: 0-12-547612-4). Brain region name and abbreviation were taken from chapter 'List of Abbreviations'."
+    }
+  }
+}
 
 ###Manual error correction:
-###MT - medial terminal nucleus of the accessory optic tract:
+###AHiPL - amygdalohippocampal area, posterolateral part:
 for(i in 1:length(PAX_v6_PEV$abbreviation)){
-  if(PAX_v6_PEV$abbreviation[i] == "MT"){
-    PAX_v6_PEV$at_id[i] <- "https://openminds.ebrains.eu/instances/parcellationEntityVersion/PW-RBSC-cor_6th-ed_medialTerminalNucleusOfTheAccessoryOpticTract"
-    PAX_v6_PEV$additionalRemarks[i] <- "Region name has a spelling mistake ('tract' is lacking the 't' at the end). The assumed correct name 'medial terminal nucleus of the accessory optic tract' has been added under 'correctedName'."
-    PAX_v6_PEV$correctedName[i] <- "medial terminal nucleus of the accessory optic tract"
-    PAX_v6_PEV$lookupLabel[i] <- "PW-RBSC-cor_6th-ed_medialTerminalNucleusOfTheAccessoryOpticTract"
+  if(PAX_v6_PEV$abbreviation[i] == "AHiPL"){
+    PAX_v6_PEV$at_id[i] <- "https://openminds.ebrains.eu/instances/parcellationEntityVersion/PW-RBSC-cor_6th-ed_amygdalohippocampalAreaPosterolateralPart"
+    PAX_v6_PEV$additionalRemarks[i] <- paste(PAX_v6_PEV$additionalRemarks[i], "Region name was extended with 'part' in accordance with the name of other subregions from the same parent structure. The assumed correct name 'amygdalohippocampal area, posterolateral part' has been added under 'correctedName'.", sep = " ")
+    PAX_v6_PEV$correctedName[i] <- "amygdalohippocampal area, posterolateral part"
+    PAX_v6_PEV$lookupLabel[i] <- "PW-RBSC-cor_6th-ed_amygdalohippocampalAreaPosterolateralPart"
+  }
+}
+
+###InCSh - interstitial nucleus of Cajal, shell region:
+for(i in 1:length(PAX_v6_PEV$abbreviation)){
+  if(PAX_v6_PEV$abbreviation[i] == "InCSh"){
+    PAX_v6_PEV$additionalRemarks[i] <- paste(PAX_v6_PEV$additionalRemarks[i], "Region name has a spelling mistake (dot instead of comma). The assumed correct name 'interstitial nucleus of Cajal, shell region' has been added under 'correctedName'.", sep = " ")
+    PAX_v6_PEV$correctedName[i] <- "interstitial nucleus of Cajal, shell region"
+  }
+}
+
+###La - lateral amygdaloid nucleus:
+for(i in 1:length(PAX_v6_PEV$abbreviation)){
+  if(PAX_v6_PEV$abbreviation[i] == "La"){
+    PAX_v6_PEV$at_id[i] <- "https://openminds.ebrains.eu/instances/parcellationEntityVersion/PW-RBSC-cor_6th-ed_lateralAmygdaloidNucleus"
+    PAX_v6_PEV$additionalRemarks[i] <- paste(PAX_v6_PEV$additionalRemarks[i], "Region name has a spelling mistake ('lat' instead of 'lateral'). The assumed correct name 'lateral amygdaloid nucleus' has been added under 'correctedName'.", sep = " ")
+    PAX_v6_PEV$correctedName[i] <- "lateral amygdaloid nucleus"
+    PAX_v6_PEV$lookupLabel[i] <- "PW-RBSC-cor_6th-ed_lateralAmygdaloidNucleus"
+  }
+}
+
+###MeAD - medial amygdaloid nucleus, anterodorsal part:
+for(i in 1:length(PAX_v6_PEV$abbreviation)){
+  if(PAX_v6_PEV$abbreviation[i] == "MeAD"){
+    PAX_v6_PEV$at_id[i] <- "https://openminds.ebrains.eu/instances/parcellationEntityVersion/PW-RBSC-cor_6th-ed_medialAmygdaloidNucleusAnterodorsalPart"
+    PAX_v6_PEV$additionalRemarks[i] <- paste(PAX_v6_PEV$additionalRemarks[i], "Region name has a spelling mistake ('ant dorsal' instead of 'anterodorsal part'). The assumed correct name 'medial amygdaloid nucleus, anterodorsal part' has been added under 'correctedName'.", sep = " ")
+    PAX_v6_PEV$correctedName[i] <- "medial amygdaloid nucleus, anterodorsal part"
+    PAX_v6_PEV$lookupLabel[i] <- "PW-RBSC-cor_6th-ed_medialAmygdaloidNucleusAnterodorsalPart"
   }
 }
 
@@ -77,7 +417,7 @@ for(i in 1:length(PAX_v6_PEV$abbreviation)){
 for(i in 1:length(PAX_v6_PEV$abbreviation)){
   if(PAX_v6_PEV$abbreviation[i] == "STSM"){
     PAX_v6_PEV$at_id[i] <- "https://openminds.ebrains.eu/instances/parcellationEntityVersion/PW-RBSC-cor_6th-ed_bedNucleusOfStriaTerminalisSupracapsularDivisionLateralPart"
-    PAX_v6_PEV$additionalRemarks[i] <- "Both the name of the region and its abbreviation have spelling mistakes (name: 'Lateral part' is lacking the space between the words; abbreviation: should read 'STSL' instead of 'STSM'). The assumed correct name 'bed nucleus of stria terminalis, supracapsular division, lateral part' has been added under 'correctedName'. The assumed correct abbreviation 'STSL' has been added under 'abbreviation'. 'STSM' has been added under 'alternateName'."
+    PAX_v6_PEV$additionalRemarks[i] <- paste(PAX_v6_PEV$additionalRemarks[i], "Both the name of the region and its abbreviation have spelling mistakes (name: 'Lateralpart' instead of 'Lateral part'; abbreviation: 'STSL' instead of 'STSM'). The assumed correct name 'bed nucleus of stria terminalis, supracapsular division, lateral part' has been added under 'correctedName'. The assumed correct abbreviation 'STSL' has been added under 'abbreviation'. 'STSM' has been added under 'alternateName'.", sep = " ")
     PAX_v6_PEV$correctedName[i] <- "bed nucleus of stria terminalis, supracapsular division, lateral part"
     PAX_v6_PEV$abbreviation[i] <- "STSL"
     PAX_v6_PEV$alternateName[i] <- "STSM"
@@ -88,11 +428,71 @@ for(i in 1:length(PAX_v6_PEV$abbreviation)){
 ###STSM - bed nucleus of stria terminalis, supracapsular division, medial part:
 for(i in 1:length(PAX_v6_PEV$abbreviation)){
   if(PAX_v6_PEV$abbreviation[i] == "STSL" & is.na(PAX_v6_PEV$alternateName[i]) == TRUE){
-    PAX_v6_PEV$additionalRemarks[i] <- "The abbreviation of the brain region has a spelling mistake. The assumed correct abbreviation 'STSL' has been added under 'abbreviation'. 'STSM' has been added under 'alternateName'."
+    PAX_v6_PEV$additionalRemarks[i] <- paste(PAX_v6_PEV$additionalRemarks[i], "The abbreviation of the brain region has a spelling mistake ('STSL' instead of 'STSM'). The assumed correct abbreviation 'STSM' has been added under 'abbreviation'. 'STSL' has been added under 'alternateName'.", sep = " ")
     PAX_v6_PEV$abbreviation[i] <- "STSM"
     PAX_v6_PEV$alternateName[i] <- "STSL"
   }
 }
+
+###FrA - frontal association cortex:
+for(i in 1:length(PAX_v6_PEV$abbreviation)){
+  if(PAX_v6_PEV$abbreviation[i] == "FrA"){
+    PAX_v6_PEV$at_id[i] <- "https://openminds.ebrains.eu/instances/parcellationEntityVersion/PW-RBSC-cor_6th-ed_frontalAssociationCortex"
+    PAX_v6_PEV$additionalRemarks[i] <- paste(PAX_v6_PEV$additionalRemarks[i], "Region name has a spelling mistake ('assocn' instead of 'association'). The assumed correct name 'frontal association cortex' has been added under 'correctedName'.", sep = " ")
+    PAX_v6_PEV$correctedName[i] <- "frontal association cortex"
+    PAX_v6_PEV$lookupLabel[i] <- "PW-RBSC-cor_6th-ed_frontalAssociationCortex"
+  }
+}
+
+###Pa - paraventricular hypothalamic nucleus:
+for(i in 1:length(PAX_v6_PEV$abbreviation)){
+  if(PAX_v6_PEV$abbreviation[i] == "Pa"){
+    PAX_v6_PEV$at_id[i] <- "https://openminds.ebrains.eu/instances/parcellationEntityVersion/PW-RBSC-cor_6th-ed_paraventricularHypothalamicNucleus"
+    PAX_v6_PEV$additionalRemarks[i] <- paste(PAX_v6_PEV$additionalRemarks[i], "Region name has a spelling mistake ('hypoth' instead of 'hypothalamic'). The assumed correct name 'paraventricular hypothalamic nucleus' has been added under 'correctedName'.", sep = " ")
+    PAX_v6_PEV$correctedName[i] <- "paraventricular hypothalamic nucleus"
+    PAX_v6_PEV$lookupLabel[i] <- "PW-RBSC-cor_6th-ed_paraventricularHypothalamicNucleus"
+  }
+}
+
+###Manual comment and error correction for more complicated cases:
+###STS - bed nucleus of stria terminalis, supracapsular division:
+for(i in 1:length(PAX_v6_PEV$abbreviation)){
+  if(PAX_v6_PEV$abbreviation[i] == "STS"){
+    PAX_v6_PEV$additionalRemarks[i] <- "Brain region name and abbreviation listed both in chapter 'List of Abbreviations' and twice in chapter 'List of Structures' of the 6th edition of The Rat Brain in Stereotaxic Coordinates (ISBN: 0-12-547612-4). Brain region name and abbreviation were taken from chapter 'List of Abbreviations'. In 'List of Structures', one of the region names is an alternate version of the region name ('bed nucleus of the stria [...]' instead of 'bed nucleus of stria [...]'). The alternate name 'bed nucleus of the stria terminalis, supracapsular division' has been added under 'alternateName'."
+    PAX_v6_PEV$alternateName[i] <- "bed nucleus of the stria terminalis, supracapsular division"
+  }
+}
+
+###SLu - stratum lucidum of the hippocampus:
+for(i in 1:length(PAX_v6_PEV$abbreviation)){
+  if(PAX_v6_PEV$abbreviation[i] == "SLu"){
+    PAX_v6_PEV$additionalRemarks[i] <- "Brain region name and abbreviation listed both in chapter 'List of Abbreviations' and twice in chapter 'List of Structures' of the 6th edition of The Rat Brain in Stereotaxic Coordinates (ISBN: 0-12-547612-4). Brain region name and abbreviation were taken from chapter 'List of Abbreviations'."
+  }
+}
+
+###KF - K??lliker-Fuse nucleus:
+for(i in 1:length(PAX_v6_PEV$abbreviation)){
+  if(PAX_v6_PEV$abbreviation[i] == "KF"){
+    PAX_v6_PEV$additionalRemarks[i] <- "Brain region name and abbreviation listed in both chapter 'List of Abbreviations' and chapter 'List of Structures' of the 6th edition of The Rat Brain in Stereotaxic Coordinates (ISBN: 0-12-547612-4). Brain region name and abbreviation were taken from chapter 'List of Structures'. In 'List of Abbreviations', region name has a spelling mistake ('K??lliker' instead of 'K??lliker'). The original name 'K??lliker-Fuse nucleus' has been added under 'alternateName'."
+    PAX_v6_PEV$alternateName[i] <- "K??lliker-Fuse nucleus"
+  }
+}
+
+###MT - medial terminal nucleus of the accessory optic tract:
+for(i in 1:length(PAX_v6_PEV$abbreviation)){
+  if(PAX_v6_PEV$abbreviation[i] == "MT"){
+    PAX_v6_PEV$additionalRemarks[i] <- "Brain region name and abbreviation listed in both chapter 'List of Abbreviations' and chapter 'List of Structures' of the 6th edition of The Rat Brain in Stereotaxic Coordinates (ISBN: 0-12-547612-4). Brain region name and abbreviation were taken from chapter 'List of Abbreviations'. In 'List of Structures', region name has a spelling mistake ('optic trac' instead of 'optic tract'). The original name 'medial terminal nucleus of the accessory optic trac' has been added under 'alternateName'."
+    PAX_v6_PEV$alternateName[i] <- "medial terminal nucleus of the accessory optic trac"
+  }
+}
+
+###S - subiculum:
+for(i in 1:length(PAX_v6_PEV$abbreviation)){
+  if(PAX_v6_PEV$abbreviation[i] == "SLu"){
+    PAX_v6_PEV$additionalRemarks[i] <- "Brain region name and abbreviation listed twice in chapter 'List of Structures', but not in chapter 'List of Abbreviations', of the 6th edition of The Rat Brain in Stereotaxic Coordinates (ISBN: 0-12-547612-4). Brain region name and abbreviation were taken from this chapter."
+  }
+}
+
 
 ###Export PEVs as excel for visual inspection:
 write_xlsx(PAX_v6_PEV,"Z:/ULRIKE/openMINDS/SANDS/PAX_v6_into-SANDS/generatedFiles/00_forInspectionOnly/PAX_v6_PEV.xlsx")
@@ -151,22 +551,48 @@ for(i in 1:length(PAX_v6_PEV$abbreviation)){
 PAX_v6_PE <- data.frame("at_id" = paste("https://openminds.ebrains.eu/instances/parcellationEntity/PW-RBSC-cor_", PAX_v6_Terms_labels$lookup, sep = ""),
                             "at_type" = rep("https://openminds.ebrains.eu/sands/ParcellationEntity", length(PAX_v6_Terms_labels$name)),
                             "abbreviation" = PAX_v6_Terms_labels$abbreviation,
-                            "alternateName" = rep(NA, length(PAX_v6_Terms$name)),
-                            "definition" = rep(NA, length(PAX_v6_Terms$name)),
-                            "hasParent" = rep(NA, length(PAX_v6_Terms$name)),
-                            "hasVersion" = rep(NA, length(PAX_v6_Terms$name)),
+                            "alternateName" = rep(NA, length(PAX_v6_Terms_labels$name)),
+                            "definition" = rep(NA, length(PAX_v6_Terms_labels$name)),
+                            "hasParent" = rep(NA, length(PAX_v6_Terms_labels$name)),
+                            "hasVersion" = rep(NA, length(PAX_v6_Terms_labels$name)),
                             "lookupLabel" = paste("PW-RBSC-cor_", PAX_v6_Terms_labels$lookup, sep = ""),
                             "name" = PAX_v6_Terms_labels$name,
-                            "ontologyIdentifier" = rep(NA, length(PAX_v6_Terms$name)),
-                            "relatedUBERONTerm" = rep(NA, length(PAX_v6_Terms$name)))
+                            "ontologyIdentifier" = rep(NA, length(PAX_v6_Terms_labels$name)),
+                            "relatedUBERONTerm" = rep(NA, length(PAX_v6_Terms_labels$name)))
+
 
 ###Manual error correction:
-###MT - medial terminal nucleus of the accessory optic tract:
+###AHiPL - amygdalohippocampal area, posterolateral part:
 for(i in 1:length(PAX_v6_PE$abbreviation)){
-  if(PAX_v6_PE$abbreviation[i] == "MT"){
-    PAX_v6_PE$at_id[i] <- "https://openminds.ebrains.eu/instances/parcellationEntity/PW-RBSC-cor_medialTerminalNucleusOfTheAccessoryOpticTract"
-    PAX_v6_PE$name[i] <- "medial terminal nucleus of the accessory optic tract"
-    PAX_v6_PE$lookupLabel[i] <- "PW-RBSC-cor_medialTerminalNucleusOfTheAccessoryOpticTract"
+  if(PAX_v6_PE$abbreviation[i] == "AHiPL"){
+    PAX_v6_PE$at_id[i] <- "https://openminds.ebrains.eu/instances/parcellationEntity/PW-RBSC-cor_amygdalohippocampalAreaPosterolateralPart"
+    PAX_v6_PE$name[i] <- "amygdalohippocampal area, posterolateral part"
+    PAX_v6_PE$lookupLabel[i] <- "PW-RBSC-cor_amygdalohippocampalAreaPosterolateralPart"
+  }
+}
+
+###InCSh - interstitial nucleus of Cajal, shell region:
+for(i in 1:length(PAX_v6_PE$abbreviation)){
+  if(PAX_v6_PE$abbreviation[i] == "InCSh"){
+    PAX_v6_PE$name[i] <- "interstitial nucleus of Cajal, shell region"
+  }
+}
+
+###La - lateral amygdaloid nucleus:
+for(i in 1:length(PAX_v6_PE$abbreviation)){
+  if(PAX_v6_PE$abbreviation[i] == "La"){
+    PAX_v6_PE$at_id[i] <- "https://openminds.ebrains.eu/instances/parcellationEntity/PW-RBSC-cor_lateralAmygdaloidNucleus"
+    PAX_v6_PE$name[i] <- "lateral amygdaloid nucleus"
+    PAX_v6_PE$lookupLabel[i] <- "PW-RBSC-cor_lateralAmygdaloidNucleus"
+  }
+}
+
+###MeAD - medial amygdaloid nucleus, anterodorsal part:
+for(i in 1:length(PAX_v6_PE$abbreviation)){
+  if(PAX_v6_PE$abbreviation[i] == "MeAD"){
+    PAX_v6_PE$at_id[i] <- "https://openminds.ebrains.eu/instances/parcellationEntity/PW-RBSC-cor_medialAmygdaloidNucleusAnterodorsalPart"
+    PAX_v6_PE$name[i] <- "medial amygdaloid nucleus, anterodorsal part"
+    PAX_v6_PE$lookupLabel[i] <- "PW-RBSC-cor_medialAmygdaloidNucleusAnterodorsalPart"
   }
 }
 
@@ -186,6 +612,31 @@ for(i in 1:length(PAX_v6_PE$abbreviation)){
   if(PAX_v6_PE$abbreviation[i] == "STSL" & is.na(PAX_v6_PE$alternateName[i]) == TRUE){
     PAX_v6_PE$abbreviation[i] <- "STSM"
     PAX_v6_PE$alternateName[i] <- "STSL"
+  }
+}
+
+###FrA - frontal association cortex:
+for(i in 1:length(PAX_v6_PE$abbreviation)){
+  if(PAX_v6_PE$abbreviation[i] == "FrA"){
+    PAX_v6_PE$at_id[i] <- "https://openminds.ebrains.eu/instances/parcellationEntity/PW-RBSC-cor_frontalAssociationCortex"
+    PAX_v6_PE$name[i] <- "frontal association cortex"
+    PAX_v6_PE$lookupLabel[i] <- "PW-RBSC-cor_frontalAssociationCortex"
+  }
+}
+
+###Pa - paraventricular hypothalamic nucleus:
+for(i in 1:length(PAX_v6_PE$abbreviation)){
+  if(PAX_v6_PE$abbreviation[i] == "Pa"){
+    PAX_v6_PE$at_id[i] <- "https://openminds.ebrains.eu/instances/parcellationEntity/PW-RBSC-cor_paraventricularHypothalamicNucleus"
+    PAX_v6_PE$name[i] <- "paraventricular hypothalamic nucleus"
+    PAX_v6_PE$lookupLabel[i] <- "PW-RBSC-cor_paraventricularHypothalamicNucleus"
+  }
+}
+
+###STS - bed nucleus of stria terminalis, supracapsular division:
+for(i in 1:length(PAX_v6_PE$abbreviation)){
+  if(PAX_v6_PE$abbreviation[i] == "STS"){
+    PAX_v6_PE$alternateName[i] <- "bed nucleus of the stria terminalis, supracapsular division"
   }
 }
 
@@ -466,7 +917,7 @@ write(json.CCSV.at, file = paste(PAX_v6_cor_CCSV_IARi$VALUE[PAX_v6_cor_CCSV_IARi
 
 #########################################################################################################################################
 ###Preparation:
-###(for linakage of CCSVs)
+###(for linkage of CCSVs)
 
 PAX_CCSVs <- c(list(list(at_id = PAX_v6_CCSV_BrLe_list$at_id)),
                list(list(at_id = PAX_v6_CCSV_BrRi_list$at_id)),
@@ -665,7 +1116,7 @@ write(json.BAV.at, file = paste(PAX_v6_cor_BAV_IARi$VALUE[PAX_v6_cor_BAV_IARi$KE
 
 #########################################################################################################################################
 ###Preparation:
-###(for linakage of BAVs)
+###(for linkage of BAVs)
 
 PAX_BAVs <- c(list(list(at_type = PAX_v6_cor_BAV_BrLe_list$at_id)),
               list(list(at_type = PAX_v6_cor_BAV_BrRi_list$at_id)),
