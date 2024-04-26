@@ -488,7 +488,7 @@ for(i in 1:length(PAX_v6_PEV$abbreviation)){
 
 ###S - subiculum:
 for(i in 1:length(PAX_v6_PEV$abbreviation)){
-  if(PAX_v6_PEV$abbreviation[i] == "SLu"){
+  if(PAX_v6_PEV$abbreviation[i] == "S"){
     PAX_v6_PEV$additionalRemarks[i] <- "Brain region name and abbreviation listed twice in chapter 'List of Structures', but not in chapter 'List of Abbreviations', of the 6th edition of The Rat Brain in Stereotaxic Coordinates (ISBN: 0-12-547612-4). Brain region name and abbreviation were taken from this chapter."
   }
 }
